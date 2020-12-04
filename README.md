@@ -31,18 +31,18 @@ String token = jwtTokenizer.generateToken(object);
 
 class JwtTokenizer : 토큰을 작성하는 클래스  
 interface JwtSignatory : 토큰 서명에 사용되는 클래스들의 인터페이스  
-class JwtHmac implements JwtSignatory : HMAC 서명 로직
-class JwtRsaSha implements JwtSignatory : RSASSA with SHA-2 서명 로직  
-enum JwtAlgorithm : 지원하는 알고리즘들을 기호화. JWT, java.security에서 필요로 하는 정보를 담음.
+class JwtHmac implements JwtSignatory : HMAC 서명 로직  
+class JwtRsaSha implements JwtSignatory : RSASSA with SHA-2 서명 로직   
+enum JwtAlgorithm : 지원하는 알고리즘들을 기호화. JWT, java.security에서 필요로 하는 정보를 담음.  
 
 ## 의존성
 
-SHA-2 해쉬계산, RSASSA with SHA-2 서명은 java.security 의 클래스를 사용하고 있습니다.
-클래스 인스턴스를 JSON으로 변환하기 위해 GSON을 사용하고 있습니다.
-lombok를 사용하고 있습니다.
+SHA-2 해쉬계산, RSASSA with SHA-2 서명은 java.security 의 클래스를 사용하고 있습니다.  
+클래스 인스턴스를 JSON으로 변환하기 위해 GSON을 사용하고 있습니다.  
+lombok를 사용하고 있습니다.  
 
 ## 샘플코드 설명
 
-jwtsample/MainClass.main 은 resource/cert.key 의 내용을 암호화키로 삼아 RS512로 토큰을 발행하는 예제입니다.
-cert.key 에는 `-----BEGIN RSA PRIVATE KEY-----` 로 시작하는 PKCS8 규격의 개인키가 담겨 있어야 합니다. 
-작동을 재현하기 쉽도록 src/main/resource 에 자체 서명된 개인키와 인증서 쌍을 함께 넣어두었습니다.
+jwtsample/MainClass.main 은 resource/cert.key 의 내용을 암호화키로 삼아 RS512로 토큰을 발행하는 예제입니다.  
+cert.key 에는 `-----BEGIN RSA PRIVATE KEY-----` 로 시작하는 PKCS8 규격의 개인키가 담겨 있어야 합니다.   
+작동을 재현하기 쉽도록 src/main/resource 에 자체 서명된 개인키와 인증서 쌍을 함께 넣어두었습니다.  
