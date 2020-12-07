@@ -6,7 +6,7 @@ package lineworks.bizdev.intern.homework.jwtlibrary;
 import lombok.Getter;
 
 @Getter
-public enum JwtAlgorithm {
+public enum JWTAlgorithm {
 
     HS256("HS256", "SHA-256", 64),
     HS384("HS384", "SHA-384", 128),
@@ -20,11 +20,11 @@ public enum JwtAlgorithm {
     private final int blockSize; // 해쉬 함수가 사용하는 블럭 크기. Byte 단위로 나타낼 것.
     private final boolean rsa; // RSA 방식인지 나타내는 불린.
 
-    JwtAlgorithm(String jwtName, String hashName, int blockSize){
+    JWTAlgorithm(String jwtName, String hashName, int blockSize){
         this(jwtName, hashName, blockSize, false);
     }
 
-    JwtAlgorithm(String jwtName, String hashName, int blockSize, boolean rsa){
+    JWTAlgorithm(String jwtName, String hashName, int blockSize, boolean rsa){
         this.jwtName = jwtName;
         this.hashName = hashName;
         this.blockSize = blockSize;

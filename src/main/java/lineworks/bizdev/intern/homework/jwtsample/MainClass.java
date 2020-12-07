@@ -2,8 +2,8 @@ package lineworks.bizdev.intern.homework.jwtsample;
 
 
 import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
-import lineworks.bizdev.intern.homework.jwtlibrary.JwtAlgorithm;
-import lineworks.bizdev.intern.homework.jwtlibrary.JwtTokenizer;
+import lineworks.bizdev.intern.homework.jwtlibrary.JWTAlgorithm;
+import lineworks.bizdev.intern.homework.jwtlibrary.JWTTokenizer;
 
 import java.io.File;
 import java.io.InputStream;
@@ -38,7 +38,7 @@ public class MainClass {
         KeyFactory kf = KeyFactory.getInstance("RSA");
         PrivateKey prKey = kf.generatePrivate(keySpec);
 
-        JwtTokenizer jwtTokenizer = new JwtTokenizer(JwtAlgorithm.RS512, prKey);
+        JWTTokenizer jwtTokenizer = new JWTTokenizer(JWTAlgorithm.RS512, prKey);
         SampleDto thisIsSample = new SampleDto();
 
         String result = jwtTokenizer.generateToken(thisIsSample);
