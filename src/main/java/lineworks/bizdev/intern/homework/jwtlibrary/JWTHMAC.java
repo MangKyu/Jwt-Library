@@ -9,13 +9,13 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 @Setter
-public class JwtHmac implements JwtSignatory{
+public class JWTHMAC implements JWTSignatory {
 
     private final String digestType;
     private final int digestBlockSize;
     private String key = null;
 
-    JwtHmac(JwtAlgorithm algorithm) {
+    JWTHMAC(JWTAlgorithm algorithm) {
         this.digestType = algorithm.getHashName();
         this.digestBlockSize = algorithm.getBlockSize();
     }

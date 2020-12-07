@@ -9,12 +9,12 @@ import java.security.PrivateKey;
 import java.security.Signature;
 
 @Setter
-public class JwtRsaSha implements JwtSignatory {
+public class JWTRSASSA implements JWTSignatory {
 
     private final String pkcsType;
     private PrivateKey key;
 
-    JwtRsaSha(JwtAlgorithm jwtAlgorithm) {
+    JWTRSASSA(JWTAlgorithm jwtAlgorithm) {
         pkcsType = jwtAlgorithm.getHashName();
     }
 
