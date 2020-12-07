@@ -1,4 +1,4 @@
-package lineworks.bizdev.intern.homework.jwtsample;
+package lineworks.bizdev.intern.homework.jwtlibrary;
 
 import lombok.Getter;
 import lombok.Setter;
