@@ -13,10 +13,10 @@ JSON으로 전송하는 데이터의 신뢰성/진위여부를 확인할 수 있
 - RS512 (RSASSA PKCS1 with SHA512)
 
 ## 사용법
-먼저 클래스 JwtTokenizer의 인스턴스를 작성합니다.
+먼저 클래스 JWTTokenizer의 인스턴스를 작성합니다.
 
 ```java
-JwtTokenizer jwtTokenizer = new JwtTokenizer(algorithm, key);
+JWTTokenizer jwtTokenizer = new JWTTokenizer(algorithm, key);
 ```
 
 algorithm은 enum JwtAlgorithm에 정의되어 있습니다.  
@@ -29,20 +29,19 @@ String token = jwtTokenizer.generateToken(object);
 
 ## 클래스별 역할 설명
 
-class JwtTokenizer : 토큰을 작성하는 클래스  
-interface JwtSignatory : 토큰 서명에 사용되는 클래스들의 인터페이스  
-class JwtHmac implements JwtSignatory : HMAC 서명 로직  
-class JwtRsaSha implements JwtSignatory : RSASSA with SHA-2 서명 로직   
-enum JwtAlgorithm : 지원하는 알고리즘들을 기호화. JWT, java.security에서 필요로 하는 정보를 담음.  
+`class JWTTokenizer` : 토큰을 작성하는 클래스  
+`interface JWTSignatory` : 토큰 서명에 사용되는 클래스들의 인터페이스  
+`class JWTHMAC implements JwtSignatory` : HMAC 서명 로직  
+`class JWTRSASSA implements JwtSignatory` : RSASSA with SHA-2 서명 로직   
+`enum JWTAlgorithm` : 지원하는 알고리즘들을 기호화. JWT, java.security에서 필요로 하는 정보를 담음.  
 
 ## 의존성
 
 SHA-2 해쉬계산, RSASSA with SHA-2 서명은 java.security 의 클래스를 사용하고 있습니다.  
 클래스 인스턴스를 JSON으로 변환하기 위해 GSON을 사용하고 있습니다.  
-lombok를 사용하고 있습니다.  
+lombok을 사용하고 있습니다.  
 
 ## 샘플코드 설명
 
-jwtsample/MainClass.main 은 resource/cert.key 의 내용을 암호화키로 삼아 RS512로 토큰을 발행하는 예제입니다.  
-cert.key 에는 `-----BEGIN RSA PRIVATE KEY-----` 로 시작하는 PKCS8 규격의 개인키가 담겨 있어야 합니다.   
-작동을 재현하기 쉽도록 src/main/resource 에 자체 서명된 개인키와 인증서 쌍을 함께 넣어두었습니다.  
+JUnit로 작성된 두개의 테스트 코드(JWTTokenizerRS256Test, JWTTokenizerHS256Test)를 포함하고 있습니다.  
+기존에 포함된 MainClass의 샘플코드는 삭제되었습니다.
