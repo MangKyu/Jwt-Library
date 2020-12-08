@@ -31,8 +31,8 @@ String token = jwtTokenizer.generateToken(object);
 
 `class JWTTokenizer` : 토큰을 작성하는 클래스  
 `interface JWTSignatory` : 토큰 서명에 사용되는 클래스들의 인터페이스  
-`class JWTHMAC implements JwtSignatory` : HMAC 서명 로직  
-`class JWTRSASSA implements JwtSignatory` : RSASSA with SHA-2 서명 로직   
+`class JWTHMAC implements JWTSignatory` : HMAC 서명 로직  
+`class JWTRSASSA implements JWTSignatory` : RSASSA with SHA-2 서명 로직   
 `enum JWTAlgorithm` : 지원하는 알고리즘들을 기호화. JWT, java.security에서 필요로 하는 정보를 담음.  
 
 ## 의존성
