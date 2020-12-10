@@ -4,14 +4,14 @@ package lineworks.bizdev.intern.homework.jwtlibrary;
 // 작성자 : 김동헌
 
 import com.google.gson.Gson;
-import lineworks.bizdev.intern.homework.jwtlibrary.dto.JwtHeader;
+import lineworks.bizdev.intern.homework.jwtlibrary.dto.JWTHeader;
 import java.security.PrivateKey;
 import java.util.Base64;
 
 public class JWTTokenizer {
 
     private final boolean rsa;
-    private final JwtHeader jwtHeader;
+    private final JWTHeader jwtHeader;
     private final String jwtHeaderBase64;
 
     private final Gson gson = new Gson();
@@ -25,7 +25,7 @@ public class JWTTokenizer {
         }
 
         rsa = algorithm.isRsa();
-        jwtHeader = new JwtHeader(algorithm.getJwtName());
+        jwtHeader = new JWTHeader(algorithm.getJwtName());
         JWTHMAC jwtHmac = new JWTHMAC(algorithm);
         jwtHmac.setKey(key);
         jwtSignatory = jwtHmac;
@@ -39,7 +39,7 @@ public class JWTTokenizer {
         }
 
         rsa = algorithm.isRsa();
-        jwtHeader = new JwtHeader(algorithm.getJwtName());
+        jwtHeader = new JWTHeader(algorithm.getJwtName());
         JWTRSASSA JWTRSASSA = new JWTRSASSA(algorithm);
         JWTRSASSA.setKey(key);
         jwtSignatory = JWTRSASSA;
