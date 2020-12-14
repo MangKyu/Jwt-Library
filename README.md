@@ -27,6 +27,12 @@ key 는 HMAC 알고리즘의 경우 String타입의 대칭키, RSASSA 알고리�
 String token = jwtTokenizer.generateToken(object);
 ```
 
+웍스모바일 API에서 요구하는 기본 ClaimSet을 payload로 사용하는 토큰은 다음 코드로 발행할 수 있습니다.
+```java
+String serverId = "46c4f281f81148c9b846c59262ae5888";
+String token = jwtTokenizer.generateClaimSetToken(serverId);
+```
+
 ## 클래스별 역할 설명
 
 `class JWTTokenizer` : 토큰을 작성하는 클래스  
@@ -34,6 +40,8 @@ String token = jwtTokenizer.generateToken(object);
 `class JWTHMAC implements JWTSignatory` : HMAC 서명 로직  
 `class JWTRSASSA implements JWTSignatory` : RSASSA with SHA-2 서명 로직   
 `enum JWTAlgorithm` : 지원하는 알고리즘들을 기호화. JWT, java.security에서 필요로 하는 정보를 담음.  
+`class JWTHeader` : 헤더 DTO
+`class JWTClaimSet` : ClaimSet DTO
 
 ## 의존성
 
