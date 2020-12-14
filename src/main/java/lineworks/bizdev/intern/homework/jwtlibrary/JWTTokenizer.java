@@ -4,6 +4,7 @@ package lineworks.bizdev.intern.homework.jwtlibrary;
 // 작성자 : 김동헌
 
 import com.google.gson.Gson;
+import lineworks.bizdev.intern.homework.jwtlibrary.dto.JWTClaimSet;
 import lineworks.bizdev.intern.homework.jwtlibrary.dto.JWTHeader;
 import java.security.PrivateKey;
 import java.util.Base64;
@@ -71,6 +72,12 @@ public class JWTTokenizer {
         String signBase64 = encodeWithBase64(sign);
 
         return body + "." + signBase64;
+    }
+
+    public String generateClaimSetToken(String serverId) throws Exception {
+        JWTClaimSet claimSet = new JWTClaimSet(serverId);
+
+        return generateToken(claimSet);
     }
 
 }

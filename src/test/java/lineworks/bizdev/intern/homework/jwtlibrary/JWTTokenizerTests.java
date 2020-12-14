@@ -1,5 +1,6 @@
 package lineworks.bizdev.intern.homework.jwtlibrary;
 
+import lineworks.bizdev.intern.homework.jwtlibrary.dto.JWTClaimSet;
 import org.junit.Test;
 import java.util.Base64;
 import java.io.File;
@@ -9,6 +10,7 @@ import java.security.PrivateKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class JWTTokenizerTests {
 
@@ -56,6 +58,62 @@ public class JWTTokenizerTests {
                 "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJoZWxsbyI6IndhIiwid29ybGQiOiJzYW5zIiwicG9pbnQiOjF9.2AwLVt_c_qBeazjHwrmsqNcjXqWNHSwfBqwmFcs4dnM",
                 result);
 
+    }
+
+    @Test
+    public void JWTTokenizerClaimSetTest() throws Exception {
+
+        File file = new File("src/test/resources/cert.key");
+
+        String privateKeyPemString = new String(Files.readAllBytes(file.toPath()));
+
+        privateKeyPemString = privateKeyPemString
+                .replace("-----BEGIN RSA PRIVATE KEY-----", "")
+                .replace("-----END RSA PRIVATE KEY-----", "")
+                .replace("\n", "")
+                .replace("\r", "");
+
+
+        byte[] decodedPrivateKeyPem = Base64.getDecoder().decode(privateKeyPemString);
+        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(decodedPrivateKeyPem);
+
+        KeyFactory kf = KeyFactory.getInstance("RSA");
+        PrivateKey prKey = kf.generatePrivate(keySpec);
+
+        JWTTokenizer jwtTokenizer = new JWTTokenizer(JWTAlgorithm.RS256, prKey);
+        JWTClaimSet thisIsSample = new JWTClaimSet("46c4f281f81148c9b846c59262ae5888", 1492504672L, 1492506472L);
+
+        String result = jwtTokenizer.generateToken(thisIsSample);
+
+        assertTrue(result.startsWith("eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI0NmM0ZjI4MWY4MTE0OGM5Yjg0NmM1OTI2MmFlNTg4OCIsImlhdCI6MTQ5MjUwNDY3MiwiZXhwIjoxNDkyNTA2NDcyfQ"));
+    }
+
+    @Test
+    public void JWTTokenizerClaimSetTest2() throws Exception {
+
+        File file = new File("src/test/resources/cert.key");
+
+        String privateKeyPemString = new String(Files.readAllBytes(file.toPath()));
+
+        privateKeyPemString = privateKeyPemString
+                .replace("-----BEGIN RSA PRIVATE KEY-----", "")
+                .replace("-----END RSA PRIVATE KEY-----", "")
+                .replace("\n", "")
+                .replace("\r", "");
+
+
+        byte[] decodedPrivateKeyPem = Base64.getDecoder().decode(privateKeyPemString);
+        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(decodedPrivateKeyPem);
+
+        KeyFactory kf = KeyFactory.getInstance("RSA");
+        PrivateKey prKey = kf.generatePrivate(keySpec);
+
+        JWTTokenizer jwtTokenizer = new JWTTokenizer(JWTAlgorithm.RS256, prKey);
+        String serverId = "46c4f281f81148c9b846c59262ae5888";
+
+        String result = jwtTokenizer.generateClaimSetToken(serverId);
+
+        System.out.println(result);
     }
 
 }
