@@ -40,7 +40,7 @@ String token = jwtTokenizer.generateClaimSetToken(serverId);
 `class JWTHMAC implements JWTSignatory` : HMAC 서명 로직  
 `class JWTRSASSA implements JWTSignatory` : RSASSA with SHA-2 서명 로직   
 `enum JWTAlgorithm` : 지원하는 알고리즘들을 기호화. JWT, java.security에서 필요로 하는 정보를 담음.  
-`class JWTHeader` : 헤더 DTO
+`class JWTHeader` : 헤더 DTO  
 `class JWTClaimSet` : ClaimSet DTO
 
 ## 의존성
