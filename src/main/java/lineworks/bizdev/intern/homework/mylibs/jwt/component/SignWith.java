@@ -31,14 +31,13 @@ public class SignWith {
 	public SignWith(EncryptAlgorithm encryptAlgorithm, Object key, String keyPath) throws
 		NoSuchAlgorithmException, IOException, InvalidKeySpecException, URISyntaxException {
 		this.encryptAlgorithm = encryptAlgorithm;
-		this.keyPath = key != null ? keyPath : "/docs/temp.key";
 		this.key = key != null ? key : readPrivateKey(keyPath);
 		rsa = encryptAlgorithm.isRsa();
+		this.keyPath = keyPath != null ? keyPath : "classpath:/docs/temp.key";
 	}
 
 	private PrivateKey readPrivateKey(String keyPath) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, URISyntaxException {
-		URL url = getClass().getClassLoader().getResource(keyPath);
-		File file = new File(url.toURI());
+		File file = new File(keyPath);
 		FileInputStream fis = new FileInputStream(file);
 		DataInputStream dis = new DataInputStream(fis);
 		byte[] keyBytes = new byte[(int)file.length()];
