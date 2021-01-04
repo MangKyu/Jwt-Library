@@ -11,6 +11,7 @@ import java.util.Map;
 import com.google.gson.Gson;
 import lineworks.bizdev.intern.homework.mylibs.jwt.component.Header;
 import lineworks.bizdev.intern.homework.mylibs.jwt.component.SignWith;
+import lineworks.bizdev.intern.homework.mylibs.jwt.component.Signatory;
 import lineworks.bizdev.intern.homework.mylibs.jwt.constants.TokenConstants;
 import lineworks.bizdev.intern.homework.mylibs.jwt.exception.InvalidTokenException;
 import lineworks.bizdev.intern.homework.mylibs.jwt.exception.TokenExpiredException;
@@ -36,6 +37,23 @@ public final class JwtParser {
 		return parsedJwts;
 	}
 
+	public static boolean isValidToken(String token, String body, Signatory signatory) throws NoSuchAlgorithmException, InvalidKeyException,
+		SignatureException {
+
+		String generatedToken = JwtGenerator.generate(body, signatory);
+		if (!generatedToken.equals(token)) {
+			throw new InvalidTokenException(generatedToken);
+		}
+		Map<String, Object> claims = getClaims(generatedToken.split("\\.")[1]);
+		Date expiredAt = getExpiredAt(claims);
+		Date now = Date.from(Calendar.getInstance().toInstant());
+
+		if (now.after(expiredAt)) {
+			throw new TokenExpiredException("Token Expired");
+		}
+		return true;
+	}
+
 	private static void checkValidity(Jwts jwts, String token) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
 		String generatedToken = JwtGenerator.generate(jwts);
 		if (!generatedToken.equals(token)) {
@@ -43,25 +61,19 @@ public final class JwtParser {
 		}
 	}
 
-	private static Header getHeader(String input) {
+	public static Header getHeader(String input) {
 		String decodedText = decodeWithBase64(input);
 		return gson.fromJson(decodedText, Header.class);
 	}
 
-	private static Map<String, Object> getClaims(String input) {
+	public static Map<String, Object> getClaims(String input) {
 		String decodedText = decodeWithBase64(input);
 		return gson.fromJson(decodedText, Map.class);
 	}
 
 	private static Date getExpiredAt(Map<String, Object> map) throws TokenExpiredException {
 		long time = getExpiredTime(map);
-		Date expiredAt = new Date(time * 1000);
-		Date now = Date.from(Calendar.getInstance().toInstant());
-
-		if (now.after(expiredAt)) {
-			throw new TokenExpiredException("Token Expired");
-		}
-		return expiredAt;
+		return new Date(time * 1000);
 	}
 
 	private static long getExpiredTime(Map<String, Object> map) {
