@@ -1,14 +1,17 @@
 package lineworks.bizdev.intern.homework.mylibs.jwt.utils;
 
+import java.lang.reflect.Type;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
 import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import lineworks.bizdev.intern.homework.mylibs.jwt.component.Header;
 import lineworks.bizdev.intern.homework.mylibs.jwt.component.SignWith;
 import lineworks.bizdev.intern.homework.mylibs.jwt.component.Signatory;
@@ -20,7 +23,6 @@ import lineworks.bizdev.intern.homework.mylibs.jwt.result.ParsedJwts;
 
 public final class JwtParser {
 
-	private static final Base64.Decoder decoder = Base64.getDecoder();
 	private static final Gson gson = new Gson();
 
 	public static Jwts parseToken(String token, SignWith signWith) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
@@ -68,7 +70,9 @@ public final class JwtParser {
 
 	public static Map<String, Object> getClaims(String input) {
 		String decodedText = decodeWithBase64(input);
-		return gson.fromJson(decodedText, Map.class);
+		Type type = new TypeToken<HashMap<String, Object>>() {
+		}.getType();
+		return gson.fromJson(decodedText, type);
 	}
 
 	private static Date getExpiredAt(Map<String, Object> map) throws TokenExpiredException {
@@ -81,7 +85,7 @@ public final class JwtParser {
 	}
 
 	private static String decodeWithBase64(String text) {
-		byte[] decodedText = decoder.decode(text);
+		byte[] decodedText = Base64.getDecoder().decode(text);
 		return new String(decodedText);
 	}
 
