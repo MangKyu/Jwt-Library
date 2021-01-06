@@ -18,6 +18,10 @@ public final class JwtGenerator {
 
 	private static final Gson gson = new Gson();
 
+	private JwtGenerator() {
+		throw new IllegalStateException("Utility Class");
+	}
+
 	public static String generate(Jwts jwts) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
 		addExpiredAt(jwts.getClaims(), jwts.getExpiredAt());
 		StringBuilder sb = new StringBuilder();

@@ -25,6 +25,10 @@ public final class JwtParser {
 
 	private static final Gson gson = new Gson();
 
+	private JwtParser() {
+		throw new IllegalStateException("Utility Class");
+	}
+
 	public static Jwts parseToken(String token, SignWith signWith) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
 		String[] strings = token.split("\\.");
 		Map<String, Object> claims = getClaims(strings[1]);
@@ -75,7 +79,7 @@ public final class JwtParser {
 		return gson.fromJson(decodedText, type);
 	}
 
-	private static Date getExpiredAt(Map<String, Object> map) throws TokenExpiredException {
+	private static Date getExpiredAt(Map<String, Object> map) {
 		long time = getExpiredTime(map);
 		return new Date(time * 1000);
 	}
