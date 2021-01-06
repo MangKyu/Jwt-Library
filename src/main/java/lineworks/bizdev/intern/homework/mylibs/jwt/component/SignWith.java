@@ -47,6 +47,9 @@ public class SignWith {
 
 		byte[] decoded = DatatypeConverter.parseBase64Binary(privKeyPEM);
 
+		fis.close();
+		dis.close();
+
 		PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(decoded);
 		KeyFactory kf = KeyFactory.getInstance("RSA");
 		return kf.generatePrivate(spec);
