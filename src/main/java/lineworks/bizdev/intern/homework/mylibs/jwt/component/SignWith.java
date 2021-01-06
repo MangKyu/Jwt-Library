@@ -16,9 +16,11 @@ import lineworks.bizdev.intern.homework.mylibs.jwt.constants.EncryptAlgorithm;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Getter
 @RequiredArgsConstructor
+@Slf4j
 public class SignWith {
 
 	private final EncryptAlgorithm encryptAlgorithm;
@@ -27,32 +29,49 @@ public class SignWith {
 
 	@Builder
 	public SignWith(EncryptAlgorithm encryptAlgorithm, Object key, String keyPath) throws
-		NoSuchAlgorithmException, IOException, InvalidKeySpecException {
+		NoSuchAlgorithmException, InvalidKeySpecException {
 		this.encryptAlgorithm = encryptAlgorithm;
 		this.key = keyPath == null ? key : readPrivateKey(keyPath);
 		rsa = encryptAlgorithm.isRsa();
 	}
 
-	private PrivateKey readPrivateKey(String keyPath) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
-		File file = new File(keyPath);
-		FileInputStream fis = new FileInputStream(file);
-		DataInputStream dis = new DataInputStream(fis);
-		byte[] keyBytes = new byte[(int)file.length()];
-		dis.readFully(keyBytes);
-		dis.close();
+	private PrivateKey readPrivateKey(String keyPath) throws NoSuchAlgorithmException, InvalidKeySpecException {
+		PrivateKey key = null;
+		FileInputStream fis = null;
+		DataInputStream dis = null;
 
-		String temp = new String(keyBytes);
-		String privKeyPEM = temp.replace("-----BEGIN PRIVATE KEY-----", "");
-		privKeyPEM = privKeyPEM.replace("-----END PRIVATE KEY-----", "");
+		try {
+			File file = new File(keyPath);
+			fis = new FileInputStream(file);
+			dis = new DataInputStream(fis);
+			byte[] keyBytes = new byte[(int)file.length()];
+			dis.readFully(keyBytes);
 
-		byte[] decoded = DatatypeConverter.parseBase64Binary(privKeyPEM);
+			String temp = new String(keyBytes);
+			String privKeyPEM = temp.replace("-----BEGIN PRIVATE KEY-----", "");
+			privKeyPEM = privKeyPEM.replace("-----END PRIVATE KEY-----", "");
 
-		fis.close();
-		dis.close();
+			byte[] decoded = DatatypeConverter.parseBase64Binary(privKeyPEM);
 
-		PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(decoded);
-		KeyFactory kf = KeyFactory.getInstance("RSA");
-		return kf.generatePrivate(spec);
+			PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(decoded);
+			KeyFactory kf = KeyFactory.getInstance("RSA");
+			key = kf.generatePrivate(spec);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (fis != null) {
+					fis.close();
+				}
+				if (dis != null) {
+					dis.close();
+				}
+
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return key;
 	}
 
 }
