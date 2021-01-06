@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO" monitorInterval="30">
+    <Properties>
+        <property name="LOG_PATH" value="./logs/JWT"/>
+        <property name="LOG_PATTERN"
+                  value="%-5level %d{yyyy-MM-dd HH:mm:ss} [%thread] %logger[%method:%line] - %msg%n"/>
+        <property name="LOG_LEVEL" value="debug"/>
+        <property name="FILE_APPENDER" value="File"/>
+        <property name="CONSOLE_APPENDER" value="Console"/>
+        <property name="IS_ADDITIVE" value="false"/>
+    </Properties>
+
+    <Appenders>
+
+        <Console name="${CONSOLE_APPENDER}" target="SYSTEM_OUT" follow="true">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+        </Console>
+
+        <RollingFile name="${FILE_APPENDER}" fileName="${LOG_PATH}/JWT.log"
+                     filePattern="${LOG_PATH}/JWT_%d{yyyy-MM-dd}.log">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+            <DefaultRolloverStrategy>
+                <Delete basePath="${LOG_PATH}">
+                    <IfFileName glob="*.log"/>
+                    <IfLastModified age="30d"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+
+        <!-- Log everything in custom package -->
+        <Logger name="lineworks.bizdev.intern.homework" level="${LOG_LEVEL}" additivity="${IS_ADDITIVE}">
+            <appender-ref ref="${CONSOLE_APPENDER}"/>
+            <appender-ref ref="${FILE_APPENDER}"/>
+        </Logger>
+
+        <Root level="${LOG_LEVEL}">
+            <appender-ref ref="${CONSOLE_APPENDER}"/>
+            <appender-ref ref="${FILE_APPENDER}"/>
+        </Root>
+
+    </Loggers>
+
+</Configuration>
