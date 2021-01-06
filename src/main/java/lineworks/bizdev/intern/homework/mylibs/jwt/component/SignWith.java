@@ -16,11 +16,11 @@ import lineworks.bizdev.intern.homework.mylibs.jwt.constants.EncryptAlgorithm;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 
 @Getter
 @RequiredArgsConstructor
-@Slf4j
+@Log4j2
 public class SignWith {
 
 	private final EncryptAlgorithm encryptAlgorithm;
@@ -57,7 +57,7 @@ public class SignWith {
 			KeyFactory kf = KeyFactory.getInstance("RSA");
 			key = kf.generatePrivate(spec);
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 		} finally {
 			try {
 				if (fis != null) {
