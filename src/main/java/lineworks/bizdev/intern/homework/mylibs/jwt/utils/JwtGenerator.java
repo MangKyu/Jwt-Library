@@ -16,7 +16,6 @@ import lineworks.bizdev.intern.homework.mylibs.jwt.result.Jwts;
 
 public final class JwtGenerator {
 
-	private static final Base64.Encoder encoder = Base64.getEncoder();
 	private static final Gson gson = new Gson();
 
 	public static String generate(Jwts jwts) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
@@ -51,7 +50,7 @@ public final class JwtGenerator {
 	}
 
 	private static String encodeWithBase64(byte[] text) {
-		byte[] encodedText = encoder.encode(text);
+		byte[] encodedText = Base64.getEncoder().encode(text);
 
 		return new String(encodedText)
 			.replace('+', '-')
