@@ -37,13 +37,12 @@ public class SignWith {
 
 	private PrivateKey readPrivateKey(String keyPath) throws NoSuchAlgorithmException, InvalidKeySpecException {
 		PrivateKey key = null;
-		FileInputStream fis = null;
-		DataInputStream dis = null;
 
-		try {
-			File file = new File(keyPath);
-			fis = new FileInputStream(file);
-			dis = new DataInputStream(fis);
+		File file = new File(keyPath);
+		try (
+			FileInputStream fis = new FileInputStream(file);
+			DataInputStream dis = new DataInputStream(fis);
+		) {
 			byte[] keyBytes = new byte[(int)file.length()];
 			dis.readFully(keyBytes);
 
@@ -58,19 +57,8 @@ public class SignWith {
 			key = kf.generatePrivate(spec);
 		} catch (IOException e) {
 			log.error(e.getMessage());
-		} finally {
-			try {
-				if (fis != null) {
-					fis.close();
-				}
-				if (dis != null) {
-					dis.close();
-				}
-
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
 		}
+
 		return key;
 	}
 
