@@ -3,8 +3,8 @@ package lineworks.bizdev.intern.homework.mylibs.jwt.sign;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import lineworks.bizdev.intern.homework.mylibs.jwt.constants.EncryptAlgorithm;
 import lineworks.bizdev.intern.homework.mylibs.jwt.component.Signatory;
+import lineworks.bizdev.intern.homework.mylibs.jwt.constants.EncryptAlgorithm;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -77,14 +77,6 @@ public class JwtHMAC implements Signatory {
 		System.arraycopy(text, 0, result, 0, originLength);
 
 		return result;
-	}
-
-	private String bytesToHex(byte[] text) {
-		StringBuilder stringBuilder = new StringBuilder();
-		for (byte t : text) {
-			stringBuilder.append(String.format("%02x", t & 0xff));
-		}
-		return stringBuilder.toString();
 	}
 
 	private byte[] normalizeKey(byte[] key) throws NoSuchAlgorithmException {
