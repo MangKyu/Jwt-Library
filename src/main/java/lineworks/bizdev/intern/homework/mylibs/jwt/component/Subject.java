@@ -1,19 +1,16 @@
 package lineworks.bizdev.intern.homework.mylibs.jwt.component;
 
-import lombok.Builder;
-import lombok.RequiredArgsConstructor;
+import lombok.Getter;
 
-@Builder
-@RequiredArgsConstructor
+@Getter
 public class Subject {
 
-	private final String iss;
-	private final Long iat;
+	private final String issuer;
+	private final Long issueAt;
 
-	@Builder
-	public Subject(String iss) {
-		this.iss = iss;
-		this.iat = System.currentTimeMillis() / 1000;
+	public Subject(String issuer) {
+		this.issuer = issuer;
+		this.issueAt = System.currentTimeMillis() / 1000L;
 	}
 
 }
