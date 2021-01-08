@@ -1,74 +1,79 @@
 package lineworks.bizdev.intern.homework.mylibs.jwt.utils;
 
-import static lineworks.bizdev.intern.homework.mylibs.jwt.constants.TokenConstants.*;
+import static lineworks.bizdev.intern.homework.mylibs.jwt.constants.ClaimsConstants.*;
 
 import java.security.InvalidKeyException;
+import java.security.Key;
+import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
-import java.util.Base64;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Date;
 import java.util.Map;
 
-import com.google.gson.Gson;
-import lineworks.bizdev.intern.homework.mylibs.jwt.component.Header;
-import lineworks.bizdev.intern.homework.mylibs.jwt.component.Signatory;
+import javax.crypto.spec.SecretKeySpec;
+import javax.xml.bind.DatatypeConverter;
+
+import lineworks.bizdev.intern.homework.mylibs.jwt.component.Subject;
+import lineworks.bizdev.intern.homework.mylibs.jwt.constants.EncryptAlgorithm;
 import lineworks.bizdev.intern.homework.mylibs.jwt.result.Jwts;
+import lineworks.bizdev.intern.homework.mylibs.jwt.sign.Signatory;
+import lombok.extern.log4j.Log4j2;
 
+@Log4j2
 public final class JwtGenerator {
-
-	private static final Gson gson = new Gson();
 
 	private JwtGenerator() {
 		throw new IllegalStateException("Utility Class");
 	}
 
 	public static String generate(Jwts jwts) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
-		addExpiredAt(jwts.getClaims(), jwts.getExpiredAt());
 		StringBuilder sb = new StringBuilder();
-		sb.append(getEncodedJsonHeader(jwts.getHeader())).append(".")
-			.append(getEncodedJsonClaims(jwts.getClaims()));
-		String jsonSign = getEncodedJsonSign(jwts.getSignatory(), sb.toString());
-		sb.append(".").append(jsonSign);
+
+		// init - Subject와 ExpiredAt을 Claims에 추가
+		init(jwts.getSubject(), jwts.getExpiredAt(), jwts.getClaims());
+
+		sb.append(DataConverter.convertHeader(jwts.getHeader())).append(".")
+			.append(DataConverter.convertClaims(jwts.getClaims()));
+		String signature = signInBody(sb.toString(), jwts.getSignatory());
+		sb.append(".").append(signature);
 		return sb.toString();
 	}
 
-	public static String generate(String body, Signatory signatory) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
-		StringBuilder sb = new StringBuilder(body);
-		String jsonSign = getEncodedJsonSign(signatory, body);
-		sb.append(".").append(jsonSign);
-		return sb.toString();
+	public static String generate(String input, Signatory signatory) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
+		String signature = signInBody(input, signatory);
+		return input + "." + signature;
 	}
 
-	private static String getEncodedJsonSign(Signatory signatory, String body) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
-		byte[] sign = signatory.generateSign(body);
-		return encodeWithBase64(sign);
+	public static Key generatePrivateKey(String keyPath) throws NoSuchAlgorithmException, InvalidKeySpecException {
+		String keyPem = DataConverter.readKeyFromFile(keyPath);
+		if (keyPem == null) {
+			throw new NullPointerException("Key Not found in: " + keyPath);
+		}
+
+		byte[] decoded = DatatypeConverter.parseBase64Binary(keyPem);
+
+		PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(decoded);
+		KeyFactory kf = KeyFactory.getInstance("RSA");
+		return kf.generatePrivate(spec);
 	}
 
-	private static String getEncodedJsonHeader(Header header) {
-		String jsonHeader = gson.toJson(header);
-		return encodeWithBase64(jsonHeader);
+	public static Key generateSecretKey(String secretKey) {
+		return new SecretKeySpec(secretKey.getBytes(), EncryptAlgorithm.HS256.getHashName());
 	}
 
-	private static String encodeWithBase64(String text) {
-		return encodeWithBase64(text.getBytes());
+	private static void init(Subject subject, Date expiredAt, Map<String, Object> claims) {
+		if (subject.getIssuer() != null) {
+			claims.put(CLAIMS_ISSUER, subject.getIssuer());
+		}
+		claims.put(CLAIMS_ISSUE_AT, subject.getIssueAt());
+		claims.put(CLAIMS_EXPIRED_AT, expiredAt.getTime() / 1000L);
 	}
 
-	private static String encodeWithBase64(byte[] text) {
-		byte[] encodedText = Base64.getEncoder().encode(text);
-
-		return new String(encodedText)
-			.replace('+', '-')
-			.replace('/', '_')
-			.replace("=", "");  //이 3행은 Base64를 Base64URL로 변환합니다.
-	}
-
-	private static String getEncodedJsonClaims(Object object) {
-		String jsonPayload = gson.toJson(object);
-		return encodeWithBase64(jsonPayload);
-	}
-
-	private static void addExpiredAt(Map<String, Object> claims, Date expiredAt) {
-		claims.put(CLAIMS_EXPIRED_AT, expiredAt.getTime() / 1000);
+	private static String signInBody(String body, Signatory signatory) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
+		byte[] signed = signatory.sign(body);
+		return DataConverter.encodeWithBase64(signed);
 	}
 
 }
