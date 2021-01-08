@@ -1,23 +1,15 @@
 package lineworks.bizdev.intern.homework.mylibs.jwt.sign;
 
+import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import lineworks.bizdev.intern.homework.mylibs.jwt.component.Signatory;
 import lineworks.bizdev.intern.homework.mylibs.jwt.constants.EncryptAlgorithm;
-import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
-public class JwtHMAC implements Signatory {
+public final class JwtHMAC extends JwtBase {
 
-	private final String digestType;
-	private final int digestBlockSize;
-	private final String key;
-
-	public JwtHMAC(EncryptAlgorithm algorithm, String key) {
-		this.digestType = algorithm.getHashName();
-		this.digestBlockSize = algorithm.getBlockSize();
-		this.key = key;
+	public JwtHMAC(EncryptAlgorithm algorithm, Key key) {
+		super(algorithm, key);
 	}
 
 	// HMAC spec에서 outerPadding 은 반복되는 0x5c로 정의되어 있음.
@@ -65,7 +57,7 @@ public class JwtHMAC implements Signatory {
 	}
 
 	private byte[] generateHash(byte[] text) throws NoSuchAlgorithmException {
-		MessageDigest md = MessageDigest.getInstance(this.digestType);
+		MessageDigest md = MessageDigest.getInstance(this.type);
 		md.update(text);
 		return md.digest();
 	}
@@ -80,21 +72,22 @@ public class JwtHMAC implements Signatory {
 	}
 
 	private byte[] normalizeKey(byte[] key) throws NoSuchAlgorithmException {
-		if (this.digestBlockSize < key.length) {
+		if (this.blockSize < key.length) {
 			return generateHash(key);
 		}
-		return padText(key, this.digestBlockSize);
+		return padText(key, this.blockSize);
 	}
 
-	public byte[] generateSign(byte[] key, byte[] message) throws NoSuchAlgorithmException {
-		byte[] normalizedKey = normalizeKey(key);
-		byte[] outerPad = generateOuterPadding(this.digestBlockSize);
-		byte[] innerPad = generateInnerPadding(this.digestBlockSize);
+	@Override
+	public byte[] sign(String message) throws NoSuchAlgorithmException {
+		byte[] normalizedKey = normalizeKey(this.key.getEncoded());
+		byte[] outerPad = generateOuterPadding(this.blockSize);
+		byte[] innerPad = generateInnerPadding(this.blockSize);
 
 		byte[] token = generateHash(
 			joinByteArrays(
 				xorByteArrays(normalizedKey, innerPad),
-				message
+				message.getBytes()
 			)
 		);
 
@@ -106,11 +99,6 @@ public class JwtHMAC implements Signatory {
 		);
 
 		return token;
-	}
-
-	@Override
-	public byte[] generateSign(String message) throws NoSuchAlgorithmException {
-		return generateSign(key.getBytes(), message.getBytes());
 	}
 
 }
